@@ -1,6 +1,6 @@
 import tkinter
 import requests
-from tkinter import Label, LabelFrame
+from tkinter import Label, LabelFrame, Toplevel, ttk
 from Blind import Time_Based_SQL_Injection as timeBasedInjection
 from Blind import Blind_SQL_Injection as booleanInjection
 #from Error import Error_Based_SQL as errorBasedInjection
@@ -13,261 +13,169 @@ from Blind import Blind_SQL_Injection as booleanInjection
 cookies = {'PHPSESSID': 'd42rp6qqm5fhj3dmn3830g74pq'}
 
 
-# Error based SQL Injection
-def errorInjection():
-    # 창 화면 설정
-    window = tkinter.Toplevel(mainWindow)
-    window.title("SQL Injection Tools")
-    window.geometry("480x400+100+100")
-    window.resizable(False, False)
 
-    label2 = tkinter.Label(window, text="이름 입력")
-    label2.pack()
 
-    name = tkinter.StringVar()
-    textbox = tkinter.Entry(window, width=12, textvariable=name)
-    textbox.pack()
-
-    labelNew = tkinter.Label(window, text="")
-    labelNew.pack()
-
-    # 창 내에 존재하는 테두리
-    labelframe2 = tkinter.LabelFrame(window, padx=100, pady=5)
-    labelframe2.place(x=30, y=110)
-
-    getDBbtn = tkinter.Button(window, text="Get Databases", command=getDB, width=11, height=1)
-    getDBbtn.place(x=360, y=228)
-
-    urlLabel = tkinter.Label(window, text="URL")
-    urlLabel.place(x=30, y=230)
-
-    urlbox = tkinter.Entry(window, width=40, state="disabled")
-    urlbox.place(x=70, y=230)
-    #
-    # Get Tables Button
-    getTbtn = tkinter.Button(window, text="Get Tables", command=getDatabase, width=11)
-    getTbtn.place(x=360, y=258)
-
-    dbLabel = tkinter.Label(window, text="Database")
-    dbLabel.place(x=30, y=260)
-
-    dbTbox = tkinter.Entry(window, width=37, state="disabled")
-    dbTbox.place(x=90, y=260)
-    #
-    # Get Columns Button
-    getCbtn = tkinter.Button(window, text="Get Columns", command=getDatabase, width=11)
-    getCbtn.place(x=360, y=288)
-
-    tablLabel = tkinter.Label(window, text="Table Name")
-    tablLabel.place(x=30, y=290)
-
-    tableTbox = tkinter.Entry(window, width=34, state="disabled")
-    tableTbox.place(x=110, y=290)
-    #
-    # Get Dump Button
-    getDbtn = tkinter.Button(window, text="Dump", command=getDatabase, width=11)
-    getDbtn.place(x=360, y=318)
-
-    columnLabel = tkinter.Label(window, text="Column's Name")
-    columnLabel.place(x=30, y=320)
-
-    columnTbox = tkinter.Entry(window, width=31, state="disabled")
-    columnTbox.place(x=130, y=320)
-
-    window.mainloop()
-
-# global name
-# global label2
-# label2 = Label
-# label2.configure(foreground='blue')
-# global labelNew
-# labelNew.configure(name.get())
-
-    # # Radio Button
-    # RadioVariety_1 = tkinter.StringVar()
-    # RadioVariety_1.set("미선택")
-    # CheckVariety_1 = tkinter.IntVar()
-    # CheckVariety_2 = tkinter.IntVar()
-    # CheckVariety_3 = tkinter.IntVar()
-    #
-    # # 라벨 프레임(창 내 테두리)에 담겨져 있는 체크 버튼
-    # checkbutton1 = tkinter.Checkbutton(labelframe2, text="Using ByPass WAF", variable=CheckVariety_1)
-    # checkbutton2 = tkinter.Checkbutton(labelframe2, text="Using RandomAgent", variable=CheckVariety_2)
-    # checkbutton3 = tkinter.Checkbutton(labelframe2, text="Enable This Option", variable=CheckVariety_3)
-    #
-    # # 체크 버튼 생성 및 위치 조정
-    # checkbutton1.pack()
-    # checkbutton2.pack()
-    # checkbutton3.pack()
+# def getDatabase():
+#     labelNew.configure(text='' + name.get())
 
 
 
 
-def getDatabase():
-    labelNew.configure(text='' + name.get())
+class Injection(Toplevel):
+    def __init__(self, parent, type):
+        super().__init__(parent)
+        self.parent = parent
+        self.title(type+" Based Injection Tools")
+        self.geometry("480x400+100+100")
+        self.resizable(False, False)
+        # Label Frame Settings
+        self.labelframe = tkinter.LabelFrame(self, padx=100, pady=5)
+        self.labelframe.place(x=30, y=110)
+        self.dbList = []
+        self.tableList = []
+        self.columnList = []
+        if type == "Time":
+            self.getDBbtn = tkinter.Button(self, text="Get Databases", command=lambda: [timeBasedInjection.find_db_name(self.dbList, self.urlTbox.get(),cookies), self.refresh()], width=11, height=1)
+            self.getTBbtn = tkinter.Button(self, text="Get Tables", command=lambda: [timeBasedInjection.find_table_name(self.tableList, self.urlTbox.get(), cookies, self.dbComboBox.get()), self.refresh()], width=11)
+            self.getCMbtn = tkinter.Button(self, text="Get Columns", command=lambda: [timeBasedInjection.find_column_name(self.columnList, self.urlTbox.get(), cookies, self.tableComboBox.get()), self.refresh()], width=11)
+            self.getDPbtn = tkinter.Button(self, text="Dump", command=lambda: [timeBasedInjection.dump_data(self.urlTbox.get(),cookies, self.tableComboBox.get(), self.columnList), self.refresh()], width=11)
+        elif type == "Blind":
+            self.getDBbtn = tkinter.Button(self, text="Get Databases", command=lambda: booleanInjection.find_id_len(self.urlTbox.get(),cookies), width=11, height=1)
+        # elif type == "Error":
 
+        # else:
 
-def blindInjection():
+        self.showdbBtn = tkinter.Button(self, text= "show", command=self.show, width=10)
+        self.showdbBtn.place(x=30, y=50)
+        self.getDBbtn.place(x=360, y=228)
+        self.urlLabel = tkinter.Label(self, text="URL")
+        self.urlLabel.place(x=30, y=230)
 
-    # 창 화면 설정
-    window = tkinter.Toplevel(mainWindow)
-    window.title("Boolean Based SQL Injection Tools")
-    window.geometry("480x400+100+100")
-    window.resizable(False, False)
+        self.urlTbox = tkinter.Entry(self, width=40)
+        self.urlTbox.place(x=70, y=230)
+        #
+        # Get Tables Button
+#        self.getTBbtn = tkinter.Button(self, text="Get Tables", command=getDatabase, width=11)
+        self.getTBbtn.place(x=360, y=258)
 
-    # Label Frame Settings
-    labelframe = tkinter.LabelFrame(window, padx=100, pady=5)
-    labelframe.place(x=30, y=110)
+        self.dbLabel = tkinter.Label(self, text="Database")
+        self.dbLabel.place(x=30, y=260)
 
-    # Get Databases Button
-    getDBbtn = tkinter.Button(window, text="Get Databases", command = lambda: booleanInjection.find_id_len(urlTbox.get(), cookies), width=11, height=1)
-    getDBbtn.place(x=360, y=228)
+        
+        self.dbComboBox = tkinter.ttk.Combobox(self, height=15, values= self.dbList)
+        self.dbComboBox.place(x=90, y=260)
+        # Get Columns Button
+#        self.getCMbtn = tkinter.Button(self, text="Get Columns", command=getDatabase, width=11)
+        self.getCMbtn.place(x=360, y=288)
 
-    urlLabel = tkinter.Label(window, text="URL")
-    urlLabel.place(x=30, y=230)
+        self.tableLabel = tkinter.Label(self, text="Table Name")
+        self.tableLabel.place(x=30, y=290)
 
-    urlTbox = tkinter.Entry(window, width=40)
-    urlTbox.place(x=70, y=230)
-    #
-    # Get Tables Button
-    getTBbtn = tkinter.Button(window, text="Get Tables", command=getDatabase, width=11)
-    getTBbtn.place(x=360, y=258)
+        self.tableComboBox = tkinter.ttk.Combobox(self, height=15, values= self.tableList)
+        self.tableComboBox.place(x=110, y=290)
 
-    dbLabel = tkinter.Label(window, text="Database")
-    dbLabel.place(x=30, y=260)
+        # Get Dump Button
+#        self.getDPbtn = tkinter.Button(self, text="Dump", command=getDatabase, width=11)
+        self.getDPbtn.place(x=360, y=318)
 
-    dbTbox = tkinter.Entry(window, width=37, state="disabled")
-    dbTbox.place(x=90, y=260)
+        self.columnLabel = tkinter.Label(self, text="Column's Name")
+        self.columnLabel.place(x=30, y=320)
 
-    # Get Columns Button
-    getCMbtn = tkinter.Button(window, text="Get Columns", command=getDatabase, width=11)
-    getCMbtn.place(x=360, y=288)
+#        self.columnTbox = tkinter.Entry(self, width=31, state="disabled")
+        self.columnComboBox = tkinter.ttk.Combobox(self, height=15, values= self.columnList)
+        self.columnComboBox.place(x=130, y=320)
+        self.mainloop()
+    
+    def show(self):
+        print(self.values)
 
-    tableLabel = tkinter.Label(window, text="Table Name")
-    tableLabel.place(x=30, y=290)
+    def refresh(self):
+        self.dbComboBox['values'] = self.dbList
+        self.tableComboBox['values'] = self.tableList
+        self.columnComboBox['values'] = self.columnList
+        
 
-    tableTbox = tkinter.Entry(window, width=34, state="disabled")
-    tableTbox.place(x=110, y=290)
+# def Injection(type):
+#     # 창 화면 설정
+#     window = tkinter.Toplevel(mainWindow)
+#     window.title(type+" Based Injection Tools")
+#     window.geometry("480x400+100+100")
+#     window.resizable(False, False)
 
-    # Get Dump Button
-    getDPbtn = tkinter.Button(window, text="Dump", command=getDatabase, width=11)
-    getDPbtn.place(x=360, y=318)
+#     # Label Frame Settings
+#     labelframe = tkinter.LabelFrame(window, padx=100, pady=5)
+#     labelframe.place(x=30, y=110)
+#     db_list = []
+#     values=[]
+#     if type == "Time":
+#         getDBbtn = tkinter.Button(window, text="Get Databases", command=lambda:values==timeBasedInjection.find_db_name(urlTbox.get(),cookies), width=11, height=1)
+#     elif type == "Blind":
+#         getDBbtn = tkinter.Button(window, text="Get Databases", command=lambda: booleanInjection.find_id_len(urlTbox.get(),cookies), width=11, height=1)
+#     # elif type == "Error":
 
-    columnLabel = tkinter.Label(window, text="Column's Name")
-    columnLabel.place(x=30, y=320)
+#     # else:
 
-    columnTbox = tkinter.Entry(window, width=31, state="disabled")
-    columnTbox.place(x=130, y=320)
+#     # Get Databases Button
+#     #getDBbtn = tkinter.Button(window, text="Get Databases", command=lambda: timeBasedInjection.find_db_length(urlTbox.get(),cookies), width=11, height=1)
+#     getDBbtn.place(x=360, y=228)
+#     urlLabel = tkinter.Label(window, text="URL")
+#     urlLabel.place(x=30, y=230)
 
-    # Radio Button
-    RadioVariety_1 = tkinter.StringVar()
-    RadioVariety_1.set("미선택")
-    CheckVariety_1=tkinter.IntVar()
-    CheckVariety_2=tkinter.IntVar()
-    CheckVariety_3=tkinter.IntVar()
+#     urlTbox = tkinter.Entry(window, width=40)
+#     urlTbox.place(x=70, y=230)
+#     #
+#     # Get Tables Button
+#     getTBbtn = tkinter.Button(window, text="Get Tables", command=getDatabase, width=11)
+#     getTBbtn.place(x=360, y=258)
 
-    checkbutton1=tkinter.Checkbutton(labelframe, text="Using ByPass WAF", variable=CheckVariety_1)
-    checkbutton2=tkinter.Checkbutton(labelframe, text="Using RandomAgent", variable=CheckVariety_2)
-    checkbutton3=tkinter.Checkbutton(labelframe, text="Enable This Option", variable=CheckVariety_3)
+#     dbLabel = tkinter.Label(window, text="Database")
+#     dbLabel.place(x=30, y=260)
 
-    # Button Settings
-    checkbutton1.pack()
-    checkbutton2.pack()
-    checkbutton3.pack()
+    
+#     dbComboBox = tkinter.ttk.Combobox(window, height=15, values= values)
+#     dbComboBox.place(x=90, y=260)
+# #   dbTbox = tkinter.Entry(window, width=37, state="disabled")
+#     # Get Columns Button
+#     getCMbtn = tkinter.Button(window, text="Get Columns", command=getDatabase, width=11)
+#     getCMbtn.place(x=360, y=288)
 
-    window.mainloop()
+#     tableLabel = tkinter.Label(window, text="Table Name")
+#     tableLabel.place(x=30, y=290)
 
-def Injection(type):
-    # 창 화면 설정
-    window = tkinter.Toplevel(mainWindow)
-    window.title(type+" Based Injection Tools")
-    window.geometry("480x400+100+100")
-    window.resizable(False, False)
+#     tableTbox = tkinter.Entry(window, width=34, state="disabled")
+#     tableTbox.place(x=110, y=290)
 
-    # Label Frame Settings
-    labelframe = tkinter.LabelFrame(window, padx=100, pady=5)
-    labelframe.place(x=30, y=110)
+#     # Get Dump Button
+#     getDPbtn = tkinter.Button(window, text="Dump", command=getDatabase, width=11)
+#     getDPbtn.place(x=360, y=318)
 
-    if type == "Time":
-        getDBbtn = tkinter.Button(window, text="Get Databases", command=lambda: timeBasedInjection.find_db_length(urlTbox.get(),cookies), width=11, height=1)
-    elif type == "Blind":
-        getDBbtn = tkinter.Button(window, text="Get Databases", command=lambda: booleanInjection.find_id_len(urlTbox.get(),cookies), width=11, height=1)
-    # elif type == "Error":
+#     columnLabel = tkinter.Label(window, text="Column's Name")
+#     columnLabel.place(x=30, y=320)
 
-    # else:
+#     columnTbox = tkinter.Entry(window, width=31, state="disabled")
+#     columnTbox.place(x=130, y=320)
 
-    # Get Databases Button
-    #getDBbtn = tkinter.Button(window, text="Get Databases", command=lambda: timeBasedInjection.find_db_length(urlTbox.get(),cookies), width=11, height=1)
-    getDBbtn.place(x=360, y=228)
+#     # Radio Button
+#     RadioVariety_1 = tkinter.StringVar()
+#     RadioVariety_1.set("미선택")
+#     CheckVariety_1=tkinter.IntVar()
+#     CheckVariety_2=tkinter.IntVar()
+#     CheckVariety_3=tkinter.IntVar()
 
-    urlLabel = tkinter.Label(window, text="URL")
-    urlLabel.place(x=30, y=230)
+#     window.mainloop()
 
-    urlTbox = tkinter.Entry(window, width=40)
-    urlTbox.place(x=70, y=230)
-    #
-    # Get Tables Button
-    getTBbtn = tkinter.Button(window, text="Get Tables", command=getDatabase, width=11)
-    getTBbtn.place(x=360, y=258)
-
-    dbLabel = tkinter.Label(window, text="Database")
-    dbLabel.place(x=30, y=260)
-
-    dbTbox = tkinter.Entry(window, width=37, state="disabled")
-    dbTbox.place(x=90, y=260)
-
-    # Get Columns Button
-    getCMbtn = tkinter.Button(window, text="Get Columns", command=getDatabase, width=11)
-    getCMbtn.place(x=360, y=288)
-
-    tableLabel = tkinter.Label(window, text="Table Name")
-    tableLabel.place(x=30, y=290)
-
-    tableTbox = tkinter.Entry(window, width=34, state="disabled")
-    tableTbox.place(x=110, y=290)
-
-    # Get Dump Button
-    getDPbtn = tkinter.Button(window, text="Dump", command=getDatabase, width=11)
-    getDPbtn.place(x=360, y=318)
-
-    columnLabel = tkinter.Label(window, text="Column's Name")
-    columnLabel.place(x=30, y=320)
-
-    columnTbox = tkinter.Entry(window, width=31, state="disabled")
-    columnTbox.place(x=130, y=320)
-
-    # Radio Button
-    RadioVariety_1 = tkinter.StringVar()
-    RadioVariety_1.set("미선택")
-    CheckVariety_1=tkinter.IntVar()
-    CheckVariety_2=tkinter.IntVar()
-    CheckVariety_3=tkinter.IntVar()
-
-    checkbutton1=tkinter.Checkbutton(labelframe, text="Using ByPass WAF", variable=CheckVariety_1)
-    checkbutton2=tkinter.Checkbutton(labelframe, text="Using RandomAgent", variable=CheckVariety_2)
-    checkbutton3=tkinter.Checkbutton(labelframe, text="Enable This Option", variable=CheckVariety_3)
-
-    # Button Settings
-    checkbutton1.pack()
-    checkbutton2.pack()
-    checkbutton3.pack()
-
-    window.mainloop()
-
-def stackedInjection():
-    abc = 1
 
 mainWindow = tkinter.Tk()
 mainWindow.title("SQL Injection Tools")
 mainWindow.resizable(False, False)
 
-blindInjectionBtn = tkinter.Button(mainWindow, text="Blind SQL Injection", command=lambda: Injection("Blind"))
+blindInjectionBtn = tkinter.Button(mainWindow, text="Blind SQL Injection", command=lambda: Injection(mainWindow, "Blind"))
 blindInjectionBtn.grid(row=0, column=0)
-errorInjectionBtn = tkinter.Button(mainWindow, text="Error Based SQL Injection", command=lambda: Injection("Error"))
+errorInjectionBtn = tkinter.Button(mainWindow, text="Error Based SQL Injection", command=lambda: Injection(mainWindow, "Error"))
 errorInjectionBtn.grid(row=0, column=1)
-timeInjectionBtn = tkinter.Button(mainWindow, text="Time Based SQL Injection", command=lambda: Injection("Time"))
+timeInjectionBtn = tkinter.Button(mainWindow, text="Time Based SQL Injection", command=lambda: Injection(mainWindow, "Time"))
 timeInjectionBtn.grid(row=1, column=0)
-stackedInjectionBtn = tkinter.Button(mainWindow, text="Query Based SQL Injection", command=lambda: Injection("Query"))
+stackedInjectionBtn = tkinter.Button(mainWindow, text="Query Based SQL Injection", command=lambda: Injection(mainWindow, "Query"))
 stackedInjectionBtn.grid(row=1, column=1)
 
 mainWindow.mainloop()
