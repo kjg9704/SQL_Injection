@@ -3,9 +3,8 @@ import requests
 from tkinter import Label, LabelFrame, Toplevel, ttk
 from Blind import Time_Based_SQL_Injection as timeBasedInjection
 from Blind import Blind_SQL_Injection as booleanInjection
-#from Error import Error_Based_SQL as errorBasedInjection
+from Error import error_based_sql_injection as errorBasedInjection
 from Query import Union_Query_Based_SQL_Injection as queryBasedInjection
-#from Stacked_Query import Stacked_Query_SQL as stckedQueryInjection
 
 
 # url = 'https://webhacking.kr/challenge/bonus-1/index.php'
@@ -41,8 +40,11 @@ class Injection(Toplevel):
             self.getTBbtn = tkinter.Button(self, text="Get Tables", command=lambda: [queryBasedInjection.find_table_name(self.tableList, self.urlTbox.get(), cookies, self.dbComboBox.get()), self.refresh()], width=11)
             self.getCMbtn = tkinter.Button(self, text="Get Columns", command=lambda: [queryBasedInjection.find_column_name(self.columnList, self.urlTbox.get(), cookies, self.dbComboBox.get(), self.tableComboBox.get()), self.refresh()], width=11)
             self.getDPbtn = tkinter.Button(self, text="Dump", command=lambda: [queryBasedInjection.dump_data(self.urlTbox.get(),cookies, self.dbComboBox.get(), self.tableComboBox.get(), self.columnList), self.refresh()], width=11)
-
-        # else:
+        else:
+            self.getDBbtn = tkinter.Button(self, text="Get Databases", command=lambda: [errorBasedInjection.find_db_name(self.dbList, self.urlTbox.get(),cookies), self.refresh()], width=11, height=1)
+            self.getTBbtn = tkinter.Button(self, text="Get Tables", command=lambda: [errorBasedInjection.find_table_name(self.tableList, self.urlTbox.get(), cookies, self.dbComboBox.get()), self.refresh()], width=11)
+            self.getCMbtn = tkinter.Button(self, text="Get Columns", command=lambda: [errorBasedInjection.find_column_name(self.columnList, self.urlTbox.get(), cookies, self.tableComboBox.get()), self.refresh()], width=11)
+            self.getDPbtn = tkinter.Button(self, text="Dump", command=lambda: [errorBasedInjection.dump_data(self.urlTbox.get(),cookies, self.tableComboBox.get(), self.columnList), self.refresh()], width=11)
 
         self.showdbBtn = tkinter.Button(self, text= "show", command=self.show, width=10)
         self.showdbBtn.place(x=30, y=50)
