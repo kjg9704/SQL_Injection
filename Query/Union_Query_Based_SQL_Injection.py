@@ -3,9 +3,11 @@ import re
 from bs4 import BeautifulSoup
 import pandas
 from tkinter import messagebox
+import tkinter
+from tkinter import Label, LabelFrame, Toplevel, ttk
 
-url = 'http://104.197.42.200/html/center/list.php?mode=search'
-cookies = {'PHPSESSID': 'd42rp6qqm5fhj3dmn3830g74pq'}
+#url = 'http://104.197.42.200/html/center/list.php?mode=search'
+#cookies = {'PHPSESSID': 'd42rp6qqm5fhj3dmn3830g74pq'}
 
 check = 'different number of columns'
 def count_board_columns(url, cookies):

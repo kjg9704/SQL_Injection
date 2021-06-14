@@ -17,7 +17,7 @@ class Injection(Toplevel):
         super().__init__(parent)
         self.parent = parent
         self.title(type+" Based Injection Tools")
-        self.geometry("480x400+100+100")
+        self.geometry("480x400+500+500")
         self.resizable(False, False)
         # Label Frame Settings
         self.labelframe = tkinter.LabelFrame(self, padx=100, pady=5)
@@ -46,8 +46,6 @@ class Injection(Toplevel):
             self.getCMbtn = tkinter.Button(self, text="Get Columns", command=lambda: [errorBasedInjection.find_column_name(self.columnList, self.urlTbox.get(), cookies, self.tableComboBox.get()), self.refresh()], width=11)
             self.getDPbtn = tkinter.Button(self, text="Dump", command=lambda: [errorBasedInjection.dump_data(self.urlTbox.get(),cookies, self.tableComboBox.get(), self.columnList), self.refresh()], width=11)
 
-        self.showdbBtn = tkinter.Button(self, text= "show", command=self.show, width=10)
-        self.showdbBtn.place(x=30, y=50)
         self.getDBbtn.place(x=360, y=228)
         self.urlLabel = tkinter.Label(self, text="URL")
         self.urlLabel.place(x=30, y=230)
@@ -86,9 +84,6 @@ class Injection(Toplevel):
         self.columnComboBox = tkinter.ttk.Combobox(self, height=15, values= self.columnList)
         self.columnComboBox.place(x=130, y=320)
         self.mainloop()
-    
-    def show(self):
-        print(self.values)
 
     def refresh(self):
         self.dbComboBox['values'] = self.dbList
@@ -99,7 +94,7 @@ class Injection(Toplevel):
 mainWindow = tkinter.Tk()
 mainWindow.title("SQL Injection Tools")
 mainWindow.resizable(False, False)
-
+mainWindow.geometry("+500+500")
 blindInjectionBtn = tkinter.Button(mainWindow, text="Blind SQL Injection", command=lambda: Injection(mainWindow, "Blind"))
 blindInjectionBtn.grid(row=0, column=0)
 errorInjectionBtn = tkinter.Button(mainWindow, text="Error Based SQL Injection", command=lambda: Injection(mainWindow, "Error"))
@@ -108,5 +103,4 @@ timeInjectionBtn = tkinter.Button(mainWindow, text="Time Based SQL Injection", c
 timeInjectionBtn.grid(row=1, column=0)
 stackedInjectionBtn = tkinter.Button(mainWindow, text="Query Based SQL Injection", command=lambda: Injection(mainWindow, "Union Query"))
 stackedInjectionBtn.grid(row=1, column=1)
-
 mainWindow.mainloop()
