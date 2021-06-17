@@ -19,7 +19,6 @@ class Injection(Toplevel):
         self.title(type+" Based Injection Tools")
         self.geometry("480x400+500+500")
         self.resizable(False, False)
-        # Label Frame Settings
         self.labelframe = tkinter.LabelFrame(self, padx=100, pady=5)
         self.labelframe.place(x=30, y=110)
         self.dbList = []
@@ -52,9 +51,7 @@ class Injection(Toplevel):
 
         self.urlTbox = tkinter.Entry(self, width=40)
         self.urlTbox.place(x=70, y=230)
-        #
-        # Get Tables Button
-#        self.getTBbtn = tkinter.Button(self, text="Get Tables", command=getDatabase, width=11)
+
         self.getTBbtn.place(x=360, y=258)
 
         self.dbLabel = tkinter.Label(self, text="Database")
@@ -63,8 +60,6 @@ class Injection(Toplevel):
         
         self.dbComboBox = tkinter.ttk.Combobox(self, height=15, values= self.dbList)
         self.dbComboBox.place(x=90, y=260)
-        # Get Columns Button
-#        self.getCMbtn = tkinter.Button(self, text="Get Columns", command=getDatabase, width=11)
         self.getCMbtn.place(x=360, y=288)
 
         self.tableLabel = tkinter.Label(self, text="Table Name")
@@ -73,14 +68,11 @@ class Injection(Toplevel):
         self.tableComboBox = tkinter.ttk.Combobox(self, height=15, values= self.tableList)
         self.tableComboBox.place(x=110, y=290)
 
-        # Get Dump Button
-#        self.getDPbtn = tkinter.Button(self, text="Dump", command=getDatabase, width=11)
         self.getDPbtn.place(x=360, y=318)
 
         self.columnLabel = tkinter.Label(self, text="Column's Name")
         self.columnLabel.place(x=30, y=320)
 
-#        self.columnTbox = tkinter.Entry(self, width=31, state="disabled")
         self.columnComboBox = tkinter.ttk.Combobox(self, height=15, values= self.columnList)
         self.columnComboBox.place(x=130, y=320)
         self.mainloop()

